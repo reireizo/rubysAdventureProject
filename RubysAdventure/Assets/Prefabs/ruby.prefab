@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 1041956333663270666}
   m_Layer: 8
   m_Name: ruby
-  m_TagString: Untagged
+  m_TagString: RubyController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -104,9 +104,12 @@ MonoBehaviour:
   speed: 3
   maxHealth: 5
   timeInvincible: 2
+  score: 0
   projectilePrefab: {fileID: 4858421643234588574, guid: 575a23d560cca83489db6f13bf8cc96a, type: 3}
   throwClip: {fileID: 8300000, guid: b2edfd40873655249ba0e01a5cf705be, type: 3}
   hurtClip: {fileID: 8300000, guid: 9b1bb1f450b7d444fa4a8019d13519a7, type: 3}
+  damageEffect: {fileID: 6986595875735114872, guid: c263d46c2f7c53d4a9d56e1523193176, type: 3}
+  scoreText: {fileID: 0}
 --- !u!50 &7984618281121613337
 Rigidbody2D:
   serializedVersion: 4

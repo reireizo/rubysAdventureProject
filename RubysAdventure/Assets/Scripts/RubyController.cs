@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class RubyController : MonoBehaviour
 {
@@ -8,12 +10,15 @@ public class RubyController : MonoBehaviour
 
     public int maxHealth = 5;
     public float timeInvincible = 2.0f;
+    public int score;
 
     public int health { get { return currentHealth; }}
     int currentHealth;
 
     bool isInvincible;
     float invincibleTimer;
+
+    bool gameOver;
 
     Rigidbody2D rigidbody2d;
     float horizontal;
@@ -28,6 +33,10 @@ public class RubyController : MonoBehaviour
 
     public AudioClip throwClip;
     public AudioClip hurtClip;
+
+    public GameObject damageEffect;
+    public TMP_Text scoreText;
+    public TMP_Text gameOverText;
     
     // Start is called before the first frame update
     void Start()
@@ -88,6 +97,28 @@ public class RubyController : MonoBehaviour
                 }
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            if (gameOver == true)
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+        }
+
+        scoreText.text = "Fixed Robots: " + score.ToString();
+
+        if (currentHealth == 0)
+        {
+            speed = 0.0f;
+            gameOver = true;
+            gameOverText.text = "You lost! Press R to Restart!";
+        }
+
+        if (score >= 8)
+        {
+            gameOverText.text = "You win! Game Created by Group 36";
+        }
     }
 
     void FixedUpdate()
@@ -109,11 +140,17 @@ public class RubyController : MonoBehaviour
             
             isInvincible = true;
             invincibleTimer = timeInvincible;
+            Instantiate(damageEffect, transform.position, Quaternion.identity);
             audioSource.PlayOneShot(hurtClip);
         }
 
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
         UIHealthBar.instance.SetValue(currentHealth / (float)maxHealth);
+    }
+
+    public void ChangeScore(int scoreAmount)
+    {
+        score += scoreAmount;
     }
 
     void Launch()
