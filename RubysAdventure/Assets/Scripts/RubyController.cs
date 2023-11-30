@@ -6,10 +6,12 @@ using UnityEngine.SceneManagement;
 
 public class RubyController : MonoBehaviour
 {
-    public float speed = 3.0f;
+    public float speed = 4.0f;
 
     public int maxHealth = 5;
     public float timeInvincible = 2.0f;
+    public float timeFaster = 5.0f;
+    public float gameTime = 120.0f;
     public int score;
 
     public int health { get { return currentHealth; }}
@@ -18,7 +20,13 @@ public class RubyController : MonoBehaviour
     bool isInvincible;
     float invincibleTimer;
 
+    public bool isFaster;
+    float fastTimer;
+
+    float gameTimer;
+
     bool gameOver;
+    bool gameWin;
 
     Rigidbody2D rigidbody2d;
     float horizontal;
@@ -37,6 +45,7 @@ public class RubyController : MonoBehaviour
     public GameObject damageEffect;
     public TMP_Text scoreText;
     public TMP_Text gameOverText;
+    public TMP_Text timerText;
     
     // Start is called before the first frame update
     void Start()
@@ -45,6 +54,7 @@ public class RubyController : MonoBehaviour
         rigidbody2d = GetComponent<Rigidbody2D>();
 
         currentHealth = maxHealth;
+        gameTimer = gameTime;
 
         audioSource= GetComponent<AudioSource>();
     }
@@ -72,11 +82,30 @@ public class RubyController : MonoBehaviour
         animator.SetFloat("Look Y", lookDirection.y);
         animator.SetFloat("Speed", move.magnitude);
 
+        if (gameWin != true)
+            gameTimer = Mathf.Clamp(gameTimer - Time.deltaTime, 0, gameTime);
+        if (gameTimer == 0)
+        {
+            speed = 0.0f;
+            gameOver = true;
+            gameOverText.text = "You lost! Press R to Restart!";
+        }
+
         if (isInvincible)
         {
             invincibleTimer -= Time.deltaTime;
             if (invincibleTimer < 0)
                 isInvincible = false;
+        }
+
+        if (isFaster)
+        {
+            fastTimer -= Time.deltaTime;
+            if (fastTimer < 0)
+            {
+                isFaster = false;
+                speed = 4.0f;
+            }
         }
 
         if(Input.GetKeyDown(KeyCode.C))
@@ -107,6 +136,7 @@ public class RubyController : MonoBehaviour
         }
 
         scoreText.text = "Fixed Robots: " + score.ToString();
+        timerText.text = "Time Left: " + gameTimer.ToString("0");
 
         if (currentHealth == 0)
         {
@@ -117,6 +147,7 @@ public class RubyController : MonoBehaviour
 
         if (score >= 8)
         {
+            gameWin = true;
             gameOverText.text = "You win! Game Created by Group 36";
         }
     }
@@ -161,5 +192,12 @@ public class RubyController : MonoBehaviour
         projectile.Launch(lookDirection, 300);
 
         animator.SetTrigger("Launch");
+    }
+
+    public void SpeedPickup()
+    {
+        isFaster = true;
+        fastTimer = timeFaster;
+        speed = speed + 2.0f;
     }
 }
